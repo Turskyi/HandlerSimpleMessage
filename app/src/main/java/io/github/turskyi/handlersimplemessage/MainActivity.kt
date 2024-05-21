@@ -15,14 +15,12 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val STATUS_NONE = 0
-
         const val STATUS_CONNECTING = 1
-
         const val STATUS_CONNECTED = 2
     }
 
 
-    private var h: Handler? = null
+    private var handler: Handler? = null
 
     var tvStatus: TextView? = null
     var pbConnect: ProgressBar? = null
@@ -35,44 +33,46 @@ class MainActivity : AppCompatActivity() {
         tvStatus = findViewById<View>(R.id.tvStatus) as TextView
         pbConnect = findViewById<View>(R.id.pbConnect) as ProgressBar
         btnConnect = findViewById<View>(R.id.btnConnect) as Button
-        h = object : Handler(Looper.getMainLooper()) {
+        handler = object : Handler(Looper.getMainLooper()) {
             override
-            fun handleMessage(msg: Message) {
-                when (msg.what) {
+            fun handleMessage(message: Message) {
+                when (message.what) {
                     STATUS_NONE -> {
                         btnConnect?.isEnabled = true
-                        tvStatus!!.text = getString(R.string.not_connected)
+                        tvStatus?.text = getString(R.string.not_connected)
                     }
+
                     STATUS_CONNECTING -> {
                         btnConnect?.isEnabled = false
-                        pbConnect!!.visibility = View.VISIBLE
-                        tvStatus!!.text = getString(R.string.connecting)
+                        pbConnect?.visibility = View.VISIBLE
+                        tvStatus?.text = getString(R.string.connecting)
                     }
+
                     STATUS_CONNECTED -> {
-                        pbConnect!!.visibility = View.GONE
-                        tvStatus!!.text = getString(R.string.connected)
+                        pbConnect?.visibility = View.GONE
+                        tvStatus?.text = getString(R.string.connected)
                     }
                 }
             }
         }
-        h?.sendEmptyMessage(STATUS_NONE)
+        handler?.sendEmptyMessage(STATUS_NONE)
     }
 
-    fun onclick(@Suppress("UNUSED_PARAMETER") v: View?) {
-        val t = Thread {
+    fun onclick(@Suppress("UNUSED_PARAMETER") view: View?) {
+        val thread = Thread {
             try {
-                h?.sendEmptyMessage(STATUS_CONNECTING)
+                handler?.sendEmptyMessage(STATUS_CONNECTING)
                 TimeUnit.SECONDS.sleep(2)
 
-                h?.sendEmptyMessage(STATUS_CONNECTED)
+                handler?.sendEmptyMessage(STATUS_CONNECTED)
 
                 TimeUnit.SECONDS.sleep(3)
 
-                h?.sendEmptyMessage(STATUS_NONE)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+                handler?.sendEmptyMessage(STATUS_NONE)
+            } catch (exception: InterruptedException) {
+                exception.printStackTrace()
             }
         }
-        t.start()
+        thread.start()
     }
 }
