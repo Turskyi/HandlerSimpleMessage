@@ -1,4 +1,4 @@
-# Project: Simple Connection State App
+# Simple Connection State App
 
 ## What it does:
 
